@@ -1,0 +1,5 @@
+env.ini
+misc/
+.venv
+*/__pycache__/
+data/results/

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UK Climate Explorer</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.min.css">
+</head>
+<body>
+
+  <header id="filter-bar">
+    <span id="site-title">UK Climate Explorer</span>
+    <div id="filter-controls">
+      <div class="filter-group">
+        <label for="select-primary">Location</label>
+        <select id="select-primary"></select>
+      </div>
+      <div class="filter-group">
+        <label for="select-compare">Compare with</label>
+        <select id="select-compare"></select>
+      </div>
+      <div class="filter-group filter-group-years">
+        <label>Years</label>
+        <input type="number" id="year-min" min="1960" max="2024" value="1960">
+        <span class="year-sep">–</span>
+        <input type="number" id="year-max" min="1960" max="2024" value="2024">
+      </div>
+      <div id="legend" class="hidden">
+        <span class="legend-dot legend-primary"></span><span id="legend-primary-name"></span>
+        <span class="legend-dot legend-compare"></span><span id="legend-compare-name"></span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div id="loading"><div class="spinner"></div><p>Loading data…</p></div>
+
+    <div id="content" class="hidden">
+
+      <!-- INFO -->
+      <section class="card" id="section-info">
+        <h2 class="section-title">Locations</h2>
+        <div id="location-cards" class="location-cards"></div>
+        <div id="map"></div>
+      </section>
+
+      <!-- TEMPERATURE -->
+      <section class="card" id="section-temp">
+        <div class="section-header">
+          <h2 class="section-title">Temperature</h2>
+          <div class="tab-group">
+            <button class="tab active" data-section="temp" data-view="monthly">Monthly</button>
+            <button class="tab" data-section="temp" data-view="annual">Annual</button>
+          </div>
+        </div>
+
+        <div id="temp-monthly">
+          <h3 class="chart-title">Temperature Range by Month</h3>
+          <p class="chart-desc">Box: average low → average high. Line: mean. Thin bars: average of yearly extremes. Dots: all-time record.</p>
+          <div class="chart-wrap chart-wrap-lg"><canvas id="chart-temp-range"></canvas></div>
+          <div class="two-col">
+            <div>
+              <h3 class="chart-title">Frost Days — avg per month</h3>
+              <p class="chart-desc">Average number of days meeting each minimum temperature threshold.</p>
+              <div class="chart-wrap"><canvas id="chart-temp-cold"></canvas></div>
+            </div>
+            <div>
+              <h3 class="chart-title">Warm Days — avg per month</h3>
+              <p class="chart-desc">Average number of days meeting each maximum temperature threshold.</p>
+              <div class="chart-wrap"><canvas id="chart-temp-hot"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="temp-annual" class="hidden">
+          <div id="temp-annual-stats" class="stat-grid"></div>
+          <h3 class="chart-title">Mean Temperature by Year</h3>
+          <div class="chart-wrap"><canvas id="chart-temp-annual"></canvas></div>
+          <h3 class="chart-title">Frost &amp; Warm Days by Year</h3>
+          <div class="two-col">
+            <div>
+              <div class="chart-wrap"><canvas id="chart-temp-cold-annual"></canvas></div>
+            </div>
+            <div>
+              <div class="chart-wrap"><canvas id="chart-temp-hot-annual"></canvas></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RAINFALL -->
+      <section class="card" id="section-rain">
+        <div class="section-header">
+          <h2 class="section-title">Rainfall</h2>
+          <div class="tab-group">
+            <button class="tab active" data-section="rain" data-view="monthly">Monthly</button>
+            <button class="tab" data-section="rain" data-view="annual">Annual</button>
+          </div>
+        </div>
+
+        <div id="rain-monthly">
+          <div id="rain-monthly-stats" class="stat-grid"></div>
+          <h3 class="chart-title">Average Monthly Rainfall (mm)</h3>
+          <div class="chart-wrap"><canvas id="chart-rain-total"></canvas></div>
+          <h3 class="chart-title">Average Rainy Days per Month</h3>
+          <p class="chart-desc">Average number of days in each month meeting each rainfall threshold.</p>
+          <div class="chart-wrap"><canvas id="chart-rain-days"></canvas></div>
+          <h3 class="chart-title">Average Wettest Day of Month (mm)</h3>
+          <p class="chart-desc">Mean of the highest single-day rainfall recorded in each month across the selected years.</p>
+          <div class="chart-wrap"><canvas id="chart-rain-maxday"></canvas></div>
+        </div>
+
+        <div id="rain-annual" class="hidden">
+          <div id="rain-annual-stats" class="stat-grid"></div>
+          <h3 class="chart-title">Annual Rainfall by Year (mm)</h3>
+          <div class="chart-wrap"><canvas id="chart-rain-annual"></canvas></div>
+          <h3 class="chart-title">Rainy Days by Year</h3>
+          <p class="chart-desc">Total days per year meeting each daily rainfall threshold.</p>
+          <div class="chart-wrap"><canvas id="chart-rain-annual-days"></canvas></div>
+          <h3 class="chart-title">Wettest Day of Year (mm)</h3>
+          <p class="chart-desc">The single highest daily rainfall recorded each year.</p>
+          <div class="chart-wrap"><canvas id="chart-rain-annual-maxday"></canvas></div>
+        </div>
+      </section>
+
+      <!-- SUNSHINE -->
+      <section class="card" id="section-sun">
+        <div class="section-header">
+          <h2 class="section-title">Sunshine</h2>
+          <div class="tab-group">
+            <button class="tab active" data-section="sun" data-view="monthly">Monthly</button>
+            <button class="tab" data-section="sun" data-view="annual">Annual</button>
+          </div>
+        </div>
+
+        <div id="sun-monthly">
+          <div class="two-col">
+            <div>
+              <h3 class="chart-title">Average Monthly Sunshine Hours</h3>
+              <div class="chart-wrap"><canvas id="chart-sun-monthly-hours"></canvas></div>
+            </div>
+            <div>
+              <h3 class="chart-title">Sunshine as % of Daylight</h3>
+              <p class="chart-desc">Hours of sunshine as a percentage of total available daylight.</p>
+              <div class="chart-wrap"><canvas id="chart-sun-monthly-pct"></canvas></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="sun-annual" class="hidden">
+          <div id="sun-annual-stats" class="stat-grid"></div>
+          <h3 class="chart-title">Annual Sunshine Hours by Year</h3>
+          <div class="chart-wrap"><canvas id="chart-sun-annual"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ROLLING TRENDS -->
+      <section class="card" id="section-rolling">
+        <div class="section-header">
+          <h2 class="section-title">Rolling Trends</h2>
+          <div class="rolling-filter">
+            <label for="rolling-metric">Metric</label>
+            <select id="rolling-metric" class="section-metric-select"></select>
+          </div>
+        </div>
+        <h3 class="chart-title">30-Year Rolling Average</h3>
+        <p class="chart-desc">Each point is the mean of the 30 years ending at that year. Covers all available data — not filtered by the year range above.</p>
+        <div class="chart-wrap chart-wrap-lg"><canvas id="chart-rolling"></canvas></div>
+      </section>
+
+    </div><!-- /content -->
+  </main>
+
+  <footer id="site-footer">
+    <p>
+      Climate data: <a href="https://ukclimateprojections-ui.metoffice.gov.uk/" target="_blank" rel="noopener">UKCP HadUK-Grid</a>,
+      Met Office Hadley Centre / DEFRA / BEIS / Environment Agency.
+      Use subject to <a href="https://ukclimateprojections-ui.metoffice.gov.uk/help/termsandconditions" target="_blank" rel="noopener">UKCP terms</a>.
+    </p>
+    <p>
+      Built with <a href="https://www.chartjs.org/" target="_blank" rel="noopener">Chart.js</a>,
+      <a href="https://leafletjs.com/" target="_blank" rel="noopener">Leaflet</a>, and
+      <a href="https://tom-select.js.org/" target="_blank" rel="noopener">Tom Select</a>.
+    </p>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/js/tom-select.complete.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/metrics.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

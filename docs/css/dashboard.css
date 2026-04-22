@@ -1,0 +1,378 @@
+:root {
+  --c-primary: #2563eb;
+  --c-compare: #f97316;
+  --c-primary-a20: rgba(37, 99, 235, 0.20);
+  --c-compare-a20: rgba(249, 115, 22, 0.20);
+  --c-primary-a50: rgba(37, 99, 235, 0.50);
+  --c-compare-a50: rgba(249, 115, 22, 0.50);
+  --c-bg: #f1f5f9;
+  --c-card: #ffffff;
+  --c-border: #e2e8f0;
+  --c-text: #1e293b;
+  --c-muted: #64748b;
+  --bar-h: 56px;
+  --radius: 10px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+  background: var(--c-bg);
+  color: var(--c-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ── Filter bar ─────────────────────────────────────────────────────────── */
+
+#filter-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  height: var(--bar-h);
+  background: rgba(30, 41, 59, 0.97);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 20px;
+  color: #f8fafc;
+}
+
+#site-title {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+#filter-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.filter-group select,
+.filter-group input[type="number"] {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f1f5f9;
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  height: 30px;
+  outline: none;
+}
+
+.filter-group select:focus,
+.filter-group input[type="number"]:focus {
+  border-color: var(--c-primary);
+}
+
+.filter-group-years input[type="number"] { width: 72px; }
+
+.year-sep { color: #64748b; }
+
+/* ── Legend ─────────────────────────────────────────────────────────────── */
+
+#legend {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  padding-left: 8px;
+  border-left: 1px solid #334155;
+}
+
+.legend-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+.legend-primary { background: var(--c-primary); }
+.legend-compare { background: var(--c-compare); }
+
+.hidden { display: none !important; }
+
+/* ── Loading ─────────────────────────────────────────────────────────────── */
+
+#loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - var(--bar-h));
+  gap: 16px;
+  color: var(--c-muted);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--c-border);
+  border-top-color: var(--c-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Main layout ─────────────────────────────────────────────────────────── */
+
+main { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+
+.card {
+  background: var(--c-card);
+  border: 1px solid var(--c-border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+/* ── Info section ───────────────────────────────────────────────────────── */
+
+#section-info { display: flex; flex-direction: column; gap: 16px; }
+
+.location-cards {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.location-card {
+  flex: 1 1 200px;
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.location-card.primary { border-left: 4px solid var(--c-primary); }
+.location-card.compare { border-left: 4px solid var(--c-compare); }
+
+.location-card h3 {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.location-card .meta-row {
+  font-size: 12px;
+  color: var(--c-muted);
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+#map { height: 280px; border-radius: 8px; overflow: hidden; border: 1px solid var(--c-border); }
+
+/* ── Section header + tabs ──────────────────────────────────────────────── */
+
+.section-title {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.tab-group {
+  display: flex;
+  gap: 4px;
+  background: var(--c-bg);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.tab {
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--c-muted);
+  transition: background 0.15s, color 0.15s;
+}
+
+.tab:hover { background: var(--c-border); color: var(--c-text); }
+.tab.active { background: var(--c-card); color: var(--c-text); font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.10); }
+
+/* ── Chart wrappers ─────────────────────────────────────────────────────── */
+
+.chart-wrap { position: relative; height: 260px; }
+.chart-wrap-lg { position: relative; height: 320px; }
+
+.chart-title {
+  font-size: 13px;
+  font-weight: 600;
+  margin: 20px 0 4px;
+}
+
+.chart-desc {
+  font-size: 12px;
+  color: var(--c-muted);
+  margin-bottom: 8px;
+}
+
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+/* ── Stat grid ──────────────────────────────────────────────────────────── */
+
+.stat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stat-card {
+  flex: 1 1 140px;
+  background: var(--c-bg);
+  border-radius: 8px;
+  padding: 12px 16px;
+  min-width: 0;
+}
+
+.stat-card .stat-label {
+  font-size: 11px;
+  color: var(--c-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 4px;
+}
+
+.stat-card .stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.stat-card .stat-value.primary { color: var(--c-primary); }
+.stat-card .stat-value.compare { color: var(--c-compare); }
+
+.stat-card .stat-compare {
+  font-size: 13px;
+  color: var(--c-compare);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+
+#site-footer {
+  padding: 20px;
+  padding-top: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--c-muted);
+  text-align: center;
+}
+
+#site-footer a { color: var(--c-muted); text-decoration: underline; }
+#site-footer a:hover { color: var(--c-text); }
+
+/* ── Rolling trends section filter ──────────────────────────────────────── */
+
+.rolling-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--c-muted);
+}
+
+.section-metric-select {
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  color: var(--c-text);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  height: 30px;
+  outline: none;
+  cursor: pointer;
+}
+
+.section-metric-select:focus { border-color: var(--c-primary); }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+/* ── Tom Select overrides (dark filter bar) ─────────────────────────────── */
+
+#filter-bar .ts-wrapper { min-width: 190px; }
+
+#filter-bar .ts-control {
+  background: #1e293b !important;
+  border: 1px solid #334155 !important;
+  border-radius: 6px !important;
+  color: #f1f5f9 !important;
+  font-size: 13px !important;
+  min-height: 30px !important;
+  padding: 2px 8px !important;
+  box-shadow: none !important;
+  cursor: pointer;
+  flex-wrap: nowrap;
+}
+
+#filter-bar .ts-control .item { color: #f1f5f9; }
+#filter-bar .ts-control input { color: #f1f5f9 !important; background: transparent !important; }
+#filter-bar .ts-control .ts-placeholder { color: #94a3b8; }
+#filter-bar .ts-control::after { border-top-color: #94a3b8 !important; }
+
+.ts-dropdown {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f1f5f9;
+  font-size: 13px;
+  z-index: 2000;
+}
+
+.ts-dropdown .ts-option { color: #f1f5f9; padding: 6px 12px; }
+.ts-dropdown .ts-option.active { background: #334155; color: #f1f5f9; }
+.ts-dropdown .ts-option.selected { background: #1d4ed8; color: #fff; }
+.ts-dropdown .ts-option.selected.active { background: #2563eb; }
+
+.ts-dropdown input.dropdown-input,
+.ts-dropdown .dropdown-input {
+  background: #0f172a !important;
+  border-bottom: 1px solid #334155 !important;
+  color: #f1f5f9 !important;
+  padding: 6px 12px !important;
+}
+
+@media (max-width: 700px) {
+  .two-col { grid-template-columns: 1fr; }
+  .stat-card { flex: 1 1 100%; }
+  #filter-bar { height: auto; padding: 10px; flex-wrap: wrap; }
+  main { padding: 12px; }
+}
