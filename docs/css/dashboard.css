@@ -1,15 +1,15 @@
 :root {
-  --c-primary: #2563eb;
-  --c-compare: #f97316;
-  --c-primary-a20: rgba(37, 99, 235, 0.20);
-  --c-compare-a20: rgba(249, 115, 22, 0.20);
-  --c-primary-a50: rgba(37, 99, 235, 0.50);
-  --c-compare-a50: rgba(249, 115, 22, 0.50);
-  --c-bg: #f1f5f9;
+  --c-primary: #2c3e50;
+  --c-compare: #18bc9c;
+  --c-primary-a20: rgba(44, 62, 80, 0.20);
+  --c-compare-a20: rgba(24, 188, 156, 0.20);
+  --c-primary-a50: rgba(44, 62, 80, 0.50);
+  --c-compare-a50: rgba(24, 188, 156, 0.50);
+  --c-bg: #f8f9fa;
   --c-card: #ffffff;
-  --c-border: #e2e8f0;
-  --c-text: #1e293b;
-  --c-muted: #64748b;
+  --c-border: #dee2e6;
+  --c-text: #2c3e50;
+  --c-muted: #7b8a8b;
   --bar-h: 56px;
   --radius: 10px;
 }
@@ -17,7 +17,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: "Lato", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--c-bg);
   color: var(--c-text);
   font-size: 14px;
@@ -31,20 +31,22 @@ body {
   top: 0;
   z-index: 1000;
   height: var(--bar-h);
-  background: rgba(30, 41, 59, 0.97);
+  background: linear-gradient(135deg, var(--c-primary) 0%, #34495e 100%);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   gap: 24px;
   padding: 0 20px;
   color: #f8fafc;
+  box-shadow: 0 2px 12px rgba(44, 62, 80, 0.16);
 }
 
 #site-title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
   flex-shrink: 0;
+  letter-spacing: 0.01em;
 }
 
 #filter-controls {
@@ -300,6 +302,12 @@ main { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
 
 #site-footer a { color: var(--c-muted); text-decoration: underline; }
 #site-footer a:hover { color: var(--c-text); }
+
+.theme-credit {
+  font-size: 10px;
+  opacity: 0.75;
+  margin-top: 2px;
+}
 
 /* ── Rolling trends section filter ──────────────────────────────────────── */
 

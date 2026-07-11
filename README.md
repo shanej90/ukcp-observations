@@ -215,3 +215,6 @@ Climate data is sourced from the UKCP HadUK-Grid dataset, produced by the Met Of
 Hadley Centre in partnership with DEFRA, BEIS, and the Environment Agency. Use of the
 data is subject to the
 [UKCP terms and conditions](https://ukclimateprojections-ui.metoffice.gov.uk/help/termsandconditions).
+
+### Theme
+The theme used is [flatly](https://bootswatch.com/flatly/) from Bootswatch.
