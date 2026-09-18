@@ -42,8 +42,24 @@ const Charts = (() => {
     };
   }
 
-  function _tempY(label = 'Temperature (°C)') {
-    return { title: { display: true, text: label, font: { size: 11 } }, grid: { color: '#f1f5f9' } };
+  function _tempY(label = 'Temperature (°C)', range = {}) {
+    return { title: { display: true, text: label, font: { size: 11 } }, grid: { color: '#f1f5f9' }, ...range };
+  }
+
+  // Shared y-axis bounds so the typical and extremes charts line up visually.
+  function _sharedTempRange(pm, cm) {
+    const keys = [
+      'avgHigh', 'avgLow', 'mean',
+      'avgYearlyHigh', 'avgYearlyLow', 'avgYearlyWarmestLow', 'avgYearlyColdestHigh',
+      'recordHigh', 'recordLow', 'recordWarmestLow', 'recordColdestHigh',
+    ];
+    const vals = [];
+    [pm, cm].filter(Boolean).forEach(m => {
+      m.monthly.forEach(mo => keys.forEach(k => { if (mo[k] != null) vals.push(mo[k]); }));
+    });
+    if (!vals.length) return {};
+    const lo = Math.min(...vals), hi = Math.max(...vals);
+    return { min: Math.floor((lo - 1) / 5) * 5, max: Math.ceil((hi + 1) / 5) * 5 };
   }
 
   function _mmY() {
@@ -56,8 +72,23 @@ const Charts = (() => {
 
   // ── Temperature range (monthly) ────────────────────────────────────────────
 
+  function _tempTooltip() {
+    return {
+      mode: 'index',
+      intersect: false,
+      callbacks: {
+        label: ctx => {
+          const v = ctx.raw;
+          if (Array.isArray(v)) return `${ctx.dataset.label}: ${v[0]}°C – ${v[1]}°C`;
+          return v != null ? `${ctx.dataset.label}: ${v}°C` : null;
+        },
+      },
+    };
+  }
+
   function renderTempRange(pm, cm, pName, cName) {
     const datasets = [];
+    const range = _sharedTempRange(pm, cm);
 
     function addSeries(m, color, colorA, name) {
       datasets.push({
@@ -69,18 +100,7 @@ const Charts = (() => {
         borderSkipped: false,
         barPercentage: 0.55,
         categoryPercentage: cm ? 0.42 : 0.65,
-        order: 3,
-      });
-      datasets.push({
-        label: `${name} avg extremes`,
-        data: m.monthly.map(mo => [mo.avgYearlyLow, mo.avgYearlyHigh]),
-        backgroundColor: 'transparent',
-        borderColor: color,
-        borderWidth: 2,
-        borderSkipped: false,
-        barPercentage: 0.10,
-        categoryPercentage: cm ? 0.42 : 0.65,
-        order: 2,
+        order: 1,
       });
       datasets.push({
         label: `${name} mean`,
@@ -92,8 +112,59 @@ const Charts = (() => {
         pointBackgroundColor: color,
         fill: false,
         tension: 0.3,
-        order: 1,
+        order: 0,
       });
+    }
+
+    addSeries(pm, COL.blue, COL.blueA, pName);
+    if (cm) addSeries(cm, COL.orange, COL.orangeA, cName);
+
+    _make('chart-temp-range', {
+      type: 'bar',
+      data: { labels: LABELS, datasets },
+      options: _baseOpts({
+        scales: { x: _monthAxis(), y: _tempY('Temperature (°C)', range) },
+        plugins: { legend: { display: false }, tooltip: _tempTooltip() },
+      }),
+    });
+  }
+
+  // ── Temperature extremes (monthly) ─────────────────────────────────────────
+  // Shares its y-axis scale with renderTempRange so the two panels line up.
+
+  function renderTempExtremes(pm, cm, pName, cName) {
+    const datasets = [];
+    const range = _sharedTempRange(pm, cm);
+
+    function addSeries(m, color, colorA, name) {
+      // Typical yearly swing: avg coldest night → avg hottest day.
+      datasets.push({
+        label: `${name} avg extremes`,
+        data: m.monthly.map(mo => [mo.avgYearlyLow, mo.avgYearlyHigh]),
+        backgroundColor: colorA(0.15),
+        borderColor: colorA(0.6),
+        borderWidth: 1,
+        borderSkipped: false,
+        barPercentage: 0.30,
+        categoryPercentage: cm ? 0.42 : 0.65,
+        grouped: false,
+        order: 4,
+      });
+      // Typical night/day inversion: avg coldest afternoon → avg warmest night.
+      datasets.push({
+        label: `${name} avg warmest low / coldest high`,
+        data: m.monthly.map(mo => [mo.avgYearlyColdestHigh, mo.avgYearlyWarmestLow]),
+        backgroundColor: 'transparent',
+        borderColor: color,
+        borderWidth: 2,
+        borderSkipped: false,
+        barPercentage: 0.14,
+        categoryPercentage: cm ? 0.42 : 0.65,
+        grouped: false,
+        order: 3,
+      });
+      // All-time record high/low — the average warmest-night/coldest-afternoon
+      // is already the inner box above, so no separate record markers for those.
       datasets.push({
         label: `${name} record high`,
         type: 'line',
@@ -122,25 +193,12 @@ const Charts = (() => {
     addSeries(pm, COL.blue, COL.blueA, pName);
     if (cm) addSeries(cm, COL.orange, COL.orangeA, cName);
 
-    _make('chart-temp-range', {
+    _make('chart-temp-extremes', {
       type: 'bar',
       data: { labels: LABELS, datasets },
       options: _baseOpts({
-        scales: { x: _monthAxis(), y: _tempY() },
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            mode: 'index',
-            intersect: false,
-            callbacks: {
-              label: ctx => {
-                const v = ctx.raw;
-                if (Array.isArray(v)) return `${ctx.dataset.label}: ${v[0]}°C – ${v[1]}°C`;
-                return v != null ? `${ctx.dataset.label}: ${v}°C` : null;
-              },
-            },
-          },
-        },
+        scales: { x: _monthAxis(), y: _tempY('Temperature (°C)', range) },
+        plugins: { legend: { display: false }, tooltip: _tempTooltip() },
       }),
     });
   }
@@ -533,7 +591,7 @@ const Charts = (() => {
   }
 
   return {
-    renderTempRange,
+    renderTempRange, renderTempExtremes,
     renderTempCold, renderTempHot,
     renderTempAnnual, renderTempFrostAnnual, renderTempHotAnnual,
     renderRainTotal, renderRainDays, renderRainMaxDay,

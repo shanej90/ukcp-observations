@@ -7,6 +7,8 @@
     { key: 'meanTemp',    label: 'Mean Temperature',  unit: '°C'  },
     { key: 'maxTmaxYear', label: 'Hottest Day',       unit: '°C'  },
     { key: 'minTminYear', label: 'Coldest Day',       unit: '°C'  },
+    { key: 'maxTminYear', label: 'Warmest Night',     unit: '°C'  },
+    { key: 'minTmaxYear', label: 'Coldest Afternoon', unit: '°C'  },
     { key: 'rainTotal',   label: 'Annual Rainfall',   unit: 'mm'  },
     { key: 'maxRainDay',  label: 'Wettest Day',       unit: 'mm'  },
     { key: 'rainyDays1',  label: 'Rainy Days (≥1mm)', unit: 'days'},
@@ -77,11 +79,15 @@
     const c = state.compareMetrics?.stats;
     document.getElementById('temp-annual-stats').innerHTML = [
       _statCard('Record high',    p?.recordHigh,    c?.recordHigh,    '°C', 1),
+      _statCard('Warmest low',    p?.recordWarmestLow, c?.recordWarmestLow, '°C', 1),
       _statCard('Avg yearly max', p?.avgYearlyHigh, c?.avgYearlyHigh, '°C', 1),
+      _statCard('Avg yearly warmest low', p?.avgYearlyWarmestLow, c?.avgYearlyWarmestLow, '°C', 1),
       _statCard('Avg high',       p?.avgHighTemp,   c?.avgHighTemp,   '°C', 1),
       _statCard('Avg mean',       p?.avgMeanTemp,   c?.avgMeanTemp,   '°C', 1),
       _statCard('Avg low',        p?.avgLowTemp,    c?.avgLowTemp,    '°C', 1),
       _statCard('Avg yearly min', p?.avgYearlyLow,  c?.avgYearlyLow,  '°C', 1),
+      _statCard('Avg yearly coldest high', p?.avgYearlyColdestHigh, c?.avgYearlyColdestHigh, '°C', 1),
+      _statCard('Coldest high',   p?.recordColdestHigh, c?.recordColdestHigh, '°C', 1),
       _statCard('Record low',     p?.recordLow,     c?.recordLow,     '°C', 1),
     ].join('');
   }
@@ -149,6 +155,7 @@
     renderTempStats();
     if (state.tabs.temp === 'monthly') {
       Charts.renderTempRange(pm(), cm(), pName(), cName());
+      Charts.renderTempExtremes(pm(), cm(), pName(), cName());
       Charts.renderTempCold(pm(), cm(), pName(), cName());
       Charts.renderTempHot(pm(), cm(), pName(), cName());
     } else {

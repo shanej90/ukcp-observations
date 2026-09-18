@@ -58,9 +58,18 @@
         </div>
 
         <div id="temp-monthly">
-          <h3 class="chart-title">Temperature Range by Month</h3>
-          <p class="chart-desc">Box: average low → average high. Line: mean. Thin bars: average of yearly extremes. Dots: all-time record.</p>
-          <div class="chart-wrap chart-wrap-lg"><canvas id="chart-temp-range"></canvas></div>
+          <div class="two-col">
+            <div>
+              <h3 class="chart-title">Typical Temperatures by Month</h3>
+              <p class="chart-desc">Box: average low → average high. Line: mean.</p>
+              <div class="chart-wrap chart-wrap-lg"><canvas id="chart-temp-range"></canvas></div>
+            </div>
+            <div>
+              <h3 class="chart-title">Temperature Extremes by Month</h3>
+              <p class="chart-desc">Outer box: average coldest night → hottest day. Inner box: average warmest night → coldest afternoon. ▲ All-time record high/low. Same scale as the chart on the left.</p>
+              <div class="chart-wrap chart-wrap-lg"><canvas id="chart-temp-extremes"></canvas></div>
+            </div>
+          </div>
           <div class="two-col">
             <div>
               <h3 class="chart-title">Frost Days — avg per month</h3>
