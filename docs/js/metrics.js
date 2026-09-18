@@ -41,6 +41,8 @@ const Metrics = (() => {
       meanTemp:    r1((avgHigh != null && avgLow != null) ? (avgHigh + avgLow) / 2 : null),
       maxTmaxYear: allTmax.length ? r1(Math.max(...allTmax)) : null,
       minTminYear: allTmin.length ? r1(Math.min(...allTmin)) : null,
+      maxTminYear: allTmin.length ? r1(Math.max(...allTmin)) : null,
+      minTmaxYear: allTmax.length ? r1(Math.min(...allTmax)) : null,
       coldBelow10: countBelow(allTmin, 10),
       coldBelow5:  countBelow(allTmin,  5),
       coldBelow0:  countBelow(allTmin,  0),
@@ -104,6 +106,7 @@ const Metrics = (() => {
       const ms = String(m);
       const allTmax = [], allTmin = [], allRain = [];
       const yearlyMaxTmax = [], yearlyMinTmin = [];
+      const yearlyMaxTmin = [], yearlyMinTmax = [];
       const yearlyRainTotal = [], yearlyMaxRainDay = [];
       const sunVals = [];
 
@@ -117,6 +120,8 @@ const Metrics = (() => {
 
         if (mo.tmax.length) yearlyMaxTmax.push(Math.max(...mo.tmax));
         if (mo.tmin.length) yearlyMinTmin.push(Math.min(...mo.tmin));
+        if (mo.tmin.length) yearlyMaxTmin.push(Math.max(...mo.tmin));
+        if (mo.tmax.length) yearlyMinTmax.push(Math.min(...mo.tmax));
 
         yearlyRainTotal.push(sum(mo.rain));
         if (mo.rain.length) yearlyMaxRainDay.push(Math.max(...mo.rain));
@@ -141,6 +146,11 @@ const Metrics = (() => {
         avgYearlyLow:  r1(mean(yearlyMinTmin)),
         recordHigh:    allTmax.length ? r1(Math.max(...allTmax)) : null,
         recordLow:     allTmin.length ? r1(Math.min(...allTmin)) : null,
+
+        avgYearlyWarmestLow:  r1(mean(yearlyMaxTmin)),
+        avgYearlyColdestHigh: r1(mean(yearlyMinTmax)),
+        recordWarmestLow:     allTmin.length ? r1(Math.max(...allTmin)) : null,
+        recordColdestHigh:    allTmax.length ? r1(Math.min(...allTmax)) : null,
 
         // Threshold days — averaged over years
         coldBelow10: r2(countBelow(allTmin, 10) / years.length),
@@ -200,6 +210,11 @@ const Metrics = (() => {
       avgLowTemp:   r1(mean(allTminOverall)),
       avgYearlyLow:  r1(mean(annual.map(a => a.minTminYear).filter(v => v != null))),
       recordLow:    allTminOverall.length ? r1(Math.min(...allTminOverall)) : null,
+
+      recordWarmestLow:     allTminOverall.length ? r1(Math.max(...allTminOverall)) : null,
+      avgYearlyWarmestLow:  r1(mean(annual.map(a => a.maxTminYear).filter(v => v != null))),
+      recordColdestHigh:    allTmaxOverall.length ? r1(Math.min(...allTmaxOverall)) : null,
+      avgYearlyColdestHigh: r1(mean(annual.map(a => a.minTmaxYear).filter(v => v != null))),
 
       avgAnnualRain:     r2(mean(annualRains)),
       wettestYear:       annualRains.length ? r2(Math.max(...annualRains)) : null,

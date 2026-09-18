@@ -1,7 +1,15 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+## [1.0.1] - 2026-09-18
+
+### Added
+
+- **Temperature Extremes by Month** chart — new panel alongside the existing range chart, showing the average coldest night → hottest day (outer box), the average warmest night → coldest afternoon (inner box), and all-time record high/low markers; shares its y-axis scale with the typical-temperatures chart so the two line up
+- Warmest Night and Coldest Afternoon metrics (annual highs of daily minimum temperature and annual lows of daily maximum temperature), with derived averages and all-time records, added to the temperature stat cards and to the Rolling trends selectable metrics
+
+### Changed
+
+- Monthly temperature view split into two side-by-side charts — "Typical Temperatures by Month" (average low/high box + mean line) and "Temperature Extremes by Month" (average yearly extremes + records) — replacing the single combined range chart
 
 ## [1.0.0] — 2026-04-22
 
